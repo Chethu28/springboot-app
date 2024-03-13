@@ -1,4 +1,4 @@
-# springboot-app
+# springboot-app deployment using Helm charts
 
 
 # Pre-Requisites

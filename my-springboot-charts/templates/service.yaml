@@ -1,15 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "my-springboot-charts.fullname" . }}
-  labels:
-    {{- include "my-springboot-charts.labels" . | nindent 4 }}
+  name: my-svc
 spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
   selector:
-    {{- include "my-springboot-charts.selectorLabels" . | nindent 4 }}
+    app: springbootapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: springbootapp-port 
+  type: NodePort

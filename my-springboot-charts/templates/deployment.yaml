@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: springbootapp
-        image: {{ .Values.appimage}}:{{ .Values.apptag}}
+        image: {{ .Values.image.repository}}:{{ .Values.image.tag}}
         ports:
         - containerPort: 8080
           name: springbootapp-port

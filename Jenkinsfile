@@ -7,6 +7,7 @@ pipeline {
     }
     
     environment {
+        SCANNER_HOME = tool "sonar-scanner"
         registry = "chethanreddy28/springbootapp"
         registryCredentails= "docker"
         AWS_ACCESS_KEY_ID = credentials("access_key")
@@ -27,9 +28,41 @@ pipeline {
                 sh 'mvn clean install'
             }
         }
+
+        stage("Sonarqube Analysis") {
+            steps {
+                withSonarQubeEnv('sonar-server') {
+                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=springboot-app \
+                    -Dsonar.projectKey=springboot-app'''
+                }
+            }
+        }
+
+        stage("quality-gate"){
+            steps{
+                script{
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarkey'
+                }
+            }
+        }
+
+        
+        stage ("artifacts-uploader"){
+            steps {
+                withMaven(globalMavenSettingsConfig: 'global-settings', jdk: 'jdk', maven: 'maven3', mavenSettingsConfig: '', traceability: true) {
+                 sh 'mvn deploy'
+               }
+            }
+        }
         stage('image-build') {
             steps {
                 sh 'docker build -t chethanreddy28/springbootapp:${BUILD_NUMBER} .'
+            }
+        }
+
+        stage('scan-image') {
+            steps {
+                sh 'trivy scan image chethanreddy28/springbootapp:${BUILD_NUMBER}' 
             }
         }
         

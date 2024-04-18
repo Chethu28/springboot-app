@@ -42,7 +42,7 @@ sudo apt install unzip -y
 unzip awscliv2.zip
 sudo ./aws/install
 ls -l /usr/local/bin/aws
-aws version
+/usr/local/bin/aws --version
  
 ```
 
